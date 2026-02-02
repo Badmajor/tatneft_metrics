@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.db import models
 
+from metrics.validators import validate_unix_timestamp
+
 User = get_user_model()
 
 
@@ -35,7 +37,7 @@ class Metric(models.Model):
         blank=True,
         null=True,
     )
-    create_at = models.DateTimeField(
+    created_at = models.DateTimeField(
         verbose_name="Создано",
         auto_now_add=True,
     )
@@ -56,11 +58,11 @@ class Metric(models.Model):
         Подключены сигналы:
          - ./signals.py
         """
-        super().seve(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class MetricRecord(models.Model):
-    mertic = models.ForeignKey(
+    metric = models.ForeignKey(
         Metric,
         verbose_name="Метрика",
         on_delete=models.CASCADE,
@@ -69,8 +71,9 @@ class MetricRecord(models.Model):
         max_digits=16,
         decimal_places=4,
     )
-    timestamp = models.IntegerField(
+    timestamp = models.BigIntegerField(
         verbose_name="Временая метка",
+        validators=[validate_unix_timestamp],
     )
     tags = models.ManyToManyField(
         Tag,
@@ -89,15 +92,15 @@ class MetricRecord(models.Model):
         verbose_name = "Запись метрики"
         verbose_name_plural = "Записи метрик"
         ordering = ["-timestamp"]
-        unique_together = ("mertic", "timestamp")
+        unique_together = ("metric", "timestamp")
 
     def __str__(self) -> str:
         return f"{self.metric_name}: {self.value} @ {self.timestamp}"
 
     def save(self, *args, **kwargs):
         if self.pk is None:
-            self.metric_name = self.mertic.name
-        super().seve(*args, **kwargs)
+            self.metric_name = self.metric.name
+        super().save(*args, **kwargs)
 
 
 class TagsMetricRecord(models.Model):
@@ -107,3 +110,6 @@ class TagsMetricRecord(models.Model):
 
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
     record = models.ForeignKey(MetricRecord, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("record", "tag")
