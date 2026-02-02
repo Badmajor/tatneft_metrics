@@ -6,11 +6,11 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = "django-insecure-csx@hs7*qc%fi8*fh1znf)k*!tb+)89=l49!5xh@lyo%+=q+2g" # TODO: Вынести в .env
+SECRET_KEY = "django-insecure-csx@hs7*qc%fi8*fh1znf)k*!tb+)89=l49!5xh@lyo%+=q+2g"  # TODO: Вынести в .env
 
-DEBUG = True # TODO: Вынести в .env
+DEBUG = True  # TODO: Вынести в .env
 
-ALLOWED_HOSTS = [] # TODO: Вынести в .env
+ALLOWED_HOSTS = []  # TODO: Вынести в .env
 
 
 INSTALLED_APPS = [
@@ -20,8 +20,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'rest_framework',
-    'metrics',
+    "rest_framework",
+    "metrics",
 ]
 
 MIDDLEWARE = [
@@ -55,18 +55,17 @@ WSGI_APPLICATION = "tatneft_metrics.wsgi.application"
 
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'HOST': '127.0.0.1', # TODO: Вынести в .env
-        'PORT': '5432', # TODO: Вынести в .env
-        'NAME': 'tatneft', # TODO: Вынести в .env
-        'USER': 'platform', # TODO: Вынести в .env
-        'PASSWORD': '123456', # TODO: Вынести в .env
-        'TEST': {
-            'NAME': 'tatneft_test', # TODO: Вынести в .env
-        }
+    "default": {
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "HOST": "127.0.0.1",  # TODO: Вынести в .env
+        "PORT": "5432",  # TODO: Вынести в .env
+        "NAME": "tatneft",  # TODO: Вынести в .env
+        "USER": "platform",  # TODO: Вынести в .env
+        "PASSWORD": "12345",  # TODO: Вынести в .env
+        "TEST": {
+            "NAME": "tatneft_test",  # TODO: Вынести в .env
+        },
     },
-
 }
 
 
@@ -86,8 +85,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LANGUAGE_CODE = 'Ru-ru'
-TIME_ZONE = 'Europe/Moscow'
+LANGUAGE_CODE = "Ru-ru"
+TIME_ZONE = "Europe/Moscow"
 
 TIME_ZONE = "UTC"
 
@@ -101,10 +100,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache", 
-        "LOCATION": "redis://:12345@127.0.0.1:6379", # TODO: Вынести в .env
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://:12345@127.0.0.1:6379",  # TODO: Вынести в .env
     }
 }
 
-CELERY_BROKER_URL = "redis://:12345@127.0.0.1:6379", # TODO: Вынести в .env
-CELERY_RESULT_BACKEND = "redis://:12345@127.0.0.1:6379", # TODO: Вынести в .env
+CELERY_BROKER_URL = ("redis://:12345@127.0.0.1:6379",)  # TODO: Вынести в .env
+CELERY_RESULT_BACKEND = ("redis://:12345@127.0.0.1:6379",)  # TODO: Вынести в .env
