@@ -12,7 +12,9 @@ from metrics.models import Metric, MetricRecord, Tag
 from metrics.serializers import (MetricRecordSerializer, MetricSerializer,
                                  TagSerializer)
 
-logger = logging.getLogger('metrics.views')
+logger = logging.getLogger("metrics.views")
+
+
 class MetricListCreateAPIView(APIView):
     def get(self, request):
         metrics = Metric.objects.filter(author=request.user)
@@ -59,7 +61,7 @@ class MetricRecordListCreateAPIView(MetricRecordQSMixin, generics.GenericAPIView
         cached_data = cache.get(cache_key)
 
         if cached_data is not None:
-            logging.debug(f'Отдаю записи метрики ID {metric_id} из кеша.')
+            logging.debug(f"Отдаю записи метрики ID {metric_id} из кеша.")
             return Response(cached_data)
 
         records = self.get_queryset()
@@ -83,7 +85,7 @@ class MetricRecordListCreateAPIView(MetricRecordQSMixin, generics.GenericAPIView
             metric=metric,
             metric_name=metric.name,
         )
-        logging.debug(f'Сбрасываю кеш записй метрики ID {metric_id}.')
+        logging.debug(f"Сбрасываю кеш записй метрики ID {metric_id}.")
         cache.delete(self.metric_records_cache_key(metric_id))
 
         return Response(

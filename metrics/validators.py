@@ -1,5 +1,7 @@
 import time
+
 from django.core.exceptions import ValidationError
+
 
 def validate_unix_timestamp(value: int) -> None:
     """

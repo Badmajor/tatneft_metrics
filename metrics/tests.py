@@ -46,17 +46,31 @@ class MetricRecordCreateAPITestCase(APITestCase):
         self.assertEqual(MetricRecord.objects.count(), 1)
 
         record = MetricRecord.objects.first()
-        self.assertEqual(record.metric, self.metric, 'Не верно указана метрика')
-        self.assertEqual(record.metric_name, self.metric.name, 'Не верно указано название метрики')
-        self.assertEqual(float(record.value), float(self.payload.get("value")), 'Значение метрики не верное')
-        self.assertEqual(record.timestamp, self.payload.get("timestamp"), 'Временая метка не верна')
+        self.assertEqual(record.metric, self.metric, "Не верно указана метрика")
+        self.assertEqual(
+            record.metric_name, self.metric.name, "Не верно указано название метрики"
+        )
+        self.assertEqual(
+            float(record.value),
+            float(self.payload.get("value")),
+            "Значение метрики не верное",
+        )
+        self.assertEqual(
+            record.timestamp, self.payload.get("timestamp"), "Временая метка не верна"
+        )
 
     def test_create_metric_record_unauthorized(self):
         """Не авторизованным пользователям отказано в доступе"""
         response = self.client.post(self.url, self.payload, format="json")
 
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED, 'Статус код должен быть 401')
-        self.assertEqual(MetricRecord.objects.count(), 0, 'Запись метрики не должна создаваться')
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_401_UNAUTHORIZED,
+            "Статус код должен быть 401",
+        )
+        self.assertEqual(
+            MetricRecord.objects.count(), 0, "Запись метрики не должна создаваться"
+        )
 
     def test_create_metric_record_for_other_user_metric(self):
         """Можно добавлят записи только для своих метрик"""
@@ -67,8 +81,16 @@ class MetricRecordCreateAPITestCase(APITestCase):
 
         response = self.client.post(self.url, self.payload, format="json")
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND, 'Пользователь не должен получать доступ к чужим метрикам')
-        self.assertEqual(MetricRecord.objects.count(), 0, "Не должны создаваться записи для чужих метрик")
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_404_NOT_FOUND,
+            "Пользователь не должен получать доступ к чужим метрикам",
+        )
+        self.assertEqual(
+            MetricRecord.objects.count(),
+            0,
+            "Не должны создаваться записи для чужих метрик",
+        )
 
     def test_cache_invalidated_on_create(self):
         self.client.force_authenticate(user=self.user)
@@ -76,9 +98,8 @@ class MetricRecordCreateAPITestCase(APITestCase):
         cache_key = MetricRecordQSMixin.metric_records_cache_key(self.metric.id)
         cache.set(cache_key, [{"fake": "data"}], timeout=300)
 
-        self.assertIsNotNone(cache.get(cache_key), 'Кеш не созраняется')
+        self.assertIsNotNone(cache.get(cache_key), "Кеш не созраняется")
 
         self.client.post(self.url, self.payload, format="json")
 
-        self.assertIsNone(cache.get(cache_key), 'Инвалидация кеша не сработала')
-
+        self.assertIsNone(cache.get(cache_key), "Инвалидация кеша не сработала")

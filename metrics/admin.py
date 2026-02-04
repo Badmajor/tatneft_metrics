@@ -2,10 +2,12 @@ from django.contrib import admin
 
 from metrics.models import Metric, MetricRecord, Tag, TagsMetricRecord
 
+
 class MetricRecordInline(admin.TabularInline):
     """
     Встраиваем записи метрик прямо в карточку метрики
     """
+
     model = MetricRecord
     extra = 0
     fields = (
@@ -16,9 +18,11 @@ class MetricRecordInline(admin.TabularInline):
     readonly_fields = ("metric_name",)
     ordering = ("-timestamp",)
 
+
 class TagsMetricRecordInline(admin.TabularInline):
     model = TagsMetricRecord
     extra = 0
+
 
 @admin.register(Metric)
 class MetricAdmin(admin.ModelAdmin):
@@ -45,13 +49,20 @@ class MetricAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
 
     fieldsets = (
-        (None, {
-            "fields": ("name", "description", "author"),
-        }),
-        ("Metadata", {
-            "fields": ("created_at",),
-        }),
+        (
+            None,
+            {
+                "fields": ("name", "description", "author"),
+            },
+        ),
+        (
+            "Metadata",
+            {
+                "fields": ("created_at",),
+            },
+        ),
     )
+
 
 @admin.register(MetricRecord)
 class MetricRecordAdmin(admin.ModelAdmin):
@@ -67,25 +78,25 @@ class MetricRecordAdmin(admin.ModelAdmin):
         "metric",
         "timestamp",
     )
-    search_fields = (
-        "metric_name",
-    )
+    search_fields = ("metric_name",)
     ordering = ("-timestamp",)
-    readonly_fields = (
-        "metric_name",
-    )
+    readonly_fields = ("metric_name",)
     fieldsets = (
-        (None, {
-            "fields": (
-                "metric",
-                "metric_name",
-                "value",
-                "timestamp",
-            )
-        }),
+        (
+            None,
+            {
+                "fields": (
+                    "metric",
+                    "metric_name",
+                    "value",
+                    "timestamp",
+                )
+            },
+        ),
     )
 
     autocomplete_fields = ("metric",)
+
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
@@ -95,4 +106,3 @@ class TagAdmin(admin.ModelAdmin):
     )
     search_fields = ("name",)
     ordering = ("name",)
-
