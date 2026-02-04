@@ -38,8 +38,13 @@ docker compose -f infra/docker-compose.yml exec backend python manage.py creates
 http://127.0.0.1:8081/admin/
 ```
 
+6. Просмотр отчета:
+```bash
+docker compose -f infra/docker-compose.yml exec backend cat reports/metrics_report.txt
+```
+
 - [JWT авторизация](docs/auth.md)
 - [API для работы с метриками](docs/metrics.md)
 
 - Создание пользователей реализовано через админ панель, стандартными инструментами django
--
+- Создане Тэгов реализовано через админ панель
