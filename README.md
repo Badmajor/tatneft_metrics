@@ -15,7 +15,7 @@ cd tatneft_metrics
 
 2. Создаём .env файл:
 ```bash
-сp .env.example .env
+cp infra/.env.example infra/.env
 ```
 
 При необходимости меняем переменные окружения.
@@ -23,7 +23,7 @@ cd tatneft_metrics
 3. Запуск Docker:
 
 ```bash
-docker-compose up --build
+docker compose -f infra/docker-compose.yml up --build
 ```
 
 4. Создать суперпользователя:
