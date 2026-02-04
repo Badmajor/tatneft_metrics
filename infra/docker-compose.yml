@@ -1,0 +1,75 @@
+services:
+  backend:
+    build:
+      context: ../
+    command: >
+      sh -c "
+      python manage.py migrate &&
+      python manage.py collectstatic --noinput &&
+      gunicorn tatneft_metrics.wsgi:application --bind 0.0.0.0:8000
+      "
+    volumes:
+      - ../:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  postgres:
+    image: postgres:17.7-bookworm
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+        - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -p 5432 -U $POSTGRES_USER"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:8.4.0-bookworm
+
+  celery_worker:
+    build:
+      context: ../
+    command: celery -A tatneft_metrics worker -l info
+    volumes:
+      - ../:/app
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - postgres
+
+  celery_beat:
+    build:
+      context: ../
+    command: celery -A tatneft_metrics beat -l info
+    volumes:
+      - ../:/app
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - postgres
+
+  nginx:
+    image: nginx:alpine
+    depends_on:
+      backend:
+        condition: service_started
+    ports:
+      - "8081:80"
+    volumes:
+      - ./configs/nginx/conf.d:/etc/nginx/conf.d
+      - ../staticfiles:/app/staticfiles
+    restart: unless-stopped
+    
+volumes:
+  postgres_data:

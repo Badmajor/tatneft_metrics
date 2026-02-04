@@ -1,18 +1,27 @@
 # Django 5.2.10.
-
-
-from pathlib import Path
+import os
 from datetime import timedelta
+from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = "django-insecure-csx@hs7*qc%fi8*fh1znf)k*!tb+)89=l49!5xh@lyo%+=q+2g"  # TODO: Вынести в .env
+SECRET_KEY = os.getenv("SECRET_KEY", "secret")
 
-DEBUG = True  # TODO: Вынести в .env
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []  # TODO: Вынести в .env
-
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    if host.strip()
+]
+CSRF_TRUSTED_ORIGINS = [
+    host.strip()
+    for host in os.getenv(
+        "CSRF_TRUSTED_ORIGINS", "http://localhost:80,http://127.0.0.1:80"
+    ).split(",")
+    if host.strip()
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -22,7 +31,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    'rest_framework_simplejwt',
+    "rest_framework_simplejwt",
     "metrics",
 ]
 
@@ -58,14 +67,14 @@ WSGI_APPLICATION = "tatneft_metrics.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "HOST": "127.0.0.1",  # TODO: Вынести в .env
-        "PORT": "5432",  # TODO: Вынести в .env
-        "NAME": "tatneft",  # TODO: Вынести в .env
-        "USER": "platform",  # TODO: Вынести в .env
-        "PASSWORD": "12345",  # TODO: Вынести в .env
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": os.getenv("DB_HOST", "127.0.0.1"),
+        "PORT": os.getenv("DB_PORT", "5432"),
+        "NAME": os.getenv("POSTGRES_DB", "tatneft"),
+        "USER": os.getenv("POSTGRES_USER", "platform"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "12345"),
         "TEST": {
-            "NAME": "tatneft_test",  # TODO: Вынести в .env
+            "NAME": os.getenv("DB_TEST", "tatneft_test"),
         },
     },
 }
@@ -97,26 +106,27 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://:12345@127.0.0.1:6379")
 
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://:12345@127.0.0.1:6379",  # TODO: Вынести в .env
+        "LOCATION": REDIS_URL,
     }
 }
 
-CELERY_BROKER_URL = ("redis://:12345@127.0.0.1:6379",)  # TODO: Вынести в .env
-CELERY_RESULT_BACKEND = ("redis://:12345@127.0.0.1:6379",)  # TODO: Вынести в .env
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated'
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
 
@@ -127,15 +137,15 @@ SIMPLE_JWT = {
 }
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG',
+    "root": {
+        "handlers": ["console"],
+        "level": "DEBUG",
     },
 }

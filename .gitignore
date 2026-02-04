@@ -57,3 +57,6 @@ build/
 # Additional
 *.tar.gz
 *.zip
+
+# Static
+staticfiles/

@@ -1,0 +1,42 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# --- Virtualenv ---
+.venv/
+venv/
+env/
+
+# --- Django ---
+*.log
+*.sqlite3
+media/
+staticfiles/
+
+# --- Tests ---
+.coverage
+htmlcov/
+.pytest_cache/
+
+# --- IDE ---
+.idea/
+.vscode/
+
+# --- OS ---
+.DS_Store
+
+# --- Docker / infra ---
+infra/
+docker/
+docker-compose.yml
+docker-compose.*.yml
+
+# --- Git ---
+.git/
+.gitignore
+
+# --- Env ---
+.env
+.env.*
