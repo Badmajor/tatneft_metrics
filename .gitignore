@@ -60,6 +60,7 @@ build/
 
 # Static
 staticfiles/
+reports/
 
 # Celery 
 celerybeat-schedule
