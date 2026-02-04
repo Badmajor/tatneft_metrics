@@ -60,3 +60,6 @@ build/
 
 # Static
 staticfiles/
+
+# Celery 
+celerybeat-schedule
