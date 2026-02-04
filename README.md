@@ -29,7 +29,7 @@ docker-compose up --build
 4. Создать суперпользователя:
 
 ```bash
-docker-compose exec backend python manage.py createsuperuser
+docker compose -f infra/docker-compose.yml exec backend python manage.py createsuperuser
 ```
 
 5. Админ панель:
@@ -41,4 +41,5 @@ http://127.0.0.1:8081/admin/
 - [JWT авторизация](docs/auth.md)
 - [API для работы с метриками](docs/metrics.md)
 
-Создание пользователей реализовано через админ панель, стандартными инструментами django
+- Создание пользователей реализовано через админ панель, стандартными инструментами django
+-
