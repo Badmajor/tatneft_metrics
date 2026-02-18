@@ -1,8 +1,11 @@
-from django.contrib import admin
-from django.urls import include, path
+from django.urls import path
 
-from metrics.views import (MetricListCreateAPIView, MetricRecordDetailAPIView,
-                           MetricRecordListCreateAPIView, TagListAPIView)
+from metrics.views import (
+    MetricListCreateAPIView,
+    MetricRecordDetailAPIView,
+    MetricRecordListCreateAPIView,
+    TagListAPIView,
+)
 
 urlpatterns = [
     path(
