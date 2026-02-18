@@ -1,6 +1,15 @@
+from pathlib import Path
+
+from django.conf import settings
 from django.contrib import admin
+from django.contrib import messages
+from django.http import FileResponse, HttpRequest, HttpResponse
+from django.shortcuts import redirect
+from django.urls import path, reverse
 
 from metrics.models import Metric, MetricRecord, Tag, TagsMetricRecord
+
+REPORT_FILE = Path(settings.BASE_DIR) / "reports" / "metrics_report.txt"
 
 
 class MetricRecordInline(admin.TabularInline):
@@ -26,6 +35,7 @@ class TagsMetricRecordInline(admin.TabularInline):
 
 @admin.register(Metric)
 class MetricAdmin(admin.ModelAdmin):
+    change_list_template = "admin/metrics/change_list.html"
     list_display = (
         "id",
         "name",
@@ -62,6 +72,32 @@ class MetricAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                "download-report/",
+                self.admin_site.admin_view(self.download_report_view),
+                name="metrics_metric_download_report",
+            )
+        ]
+        return custom_urls + urls
+
+    def download_report_view(self, request: HttpRequest) -> HttpResponse:
+        if not REPORT_FILE.exists():
+            self.message_user(
+                request,
+                "Отчет еще не сгенерирован или недоступен.",
+                level=messages.ERROR,
+            )
+            return redirect(reverse("admin:metrics_metric_changelist"))
+
+        return FileResponse(
+            REPORT_FILE.open("rb"),
+            as_attachment=True,
+            filename=REPORT_FILE.name,
+        )
 
 
 @admin.register(MetricRecord)
